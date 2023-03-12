@@ -3,7 +3,7 @@ name: Deploy to ECR
 on:
  
   push:
-    branches: [ cloud ]
+    branches: [ main ]
 
 jobs:
   
@@ -20,6 +20,28 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
     
+    
+    - name: Setup Kube Context
+      env:
+        KUBECONFIG: ${{ runner.temp }}/.kube/config
+      run: |
+        # Setup AWS IAM Authenticator for Kubernetes
+        cd $( mktemp -d )
+        curl -o aws-iam-authenticator --location https://amazon-eks.s3-us-west-2.amazonaws.com/1.13.7/2019-06-11/bin/linux/amd64/aws-iam-authenticator
+        chmod +x ./aws-iam-authenticator
+        mv ./aws-iam-authenticator "${HOME}/.local/bin"
+        aws-iam-authenticator help
+        # Setup kustomize
+        cd $( mktemp -d )
+        curl -o kustomize --location https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+        chmod u+x ./kustomize
+        mv ./kustomize "${HOME}/.local/bin"
+        # Setup Kube Config
+        mkdir -p "${RUNNER_TEMP}/.kube"
+        echo "::set-env name=KUBECONFIG,::${KUBECONFIG}"
+        echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > "${KUBECONFIG}"
+        
+        
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -38,3 +60,11 @@ jobs:
       run: |
         docker buildx build -t ${{env.ECR_REGISTRY}}/${{env.ECR_REPOSITORY}} -f ./Dockerfile .
         docker push ${{ steps.login-ecr.outputs.registry }}/${{env.ECR_REPOSITORY}}
+        # Apply configuration to cluster
+        export KUBECONFIG="${RUNNER_TEMP}/.kube/config"
+        kustomize edit set image ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/example-eks:${GITHUB_SHA}
+        kustomize build . | kubectl apply -f -
+        # Verify deployment
+        kubectl rollout status deployment/aws-example-octodex
+        # List Public IP of cluster
+        kubectl get services -o wide
