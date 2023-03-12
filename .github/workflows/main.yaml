@@ -39,7 +39,8 @@ jobs:
         aws_region: "eu-west-2"
         cluster_name: "ARC-Cluster"
         eks_role_arn: "arn:aws:iam::080846062325:role/ARC-EKS-Role"
-        args: set image --record deployment/pod-name pod-name=${{ steps.build.outputs.080846062325.dkr.ecr.eu-west-2.amazonaws.com/arc:latest }}
+        Image_URL: "080846062325.dkr.ecr.eu-west-2.amazonaws.com/arc:latest"
+        args: set image --record deployment/pod-name pod-name=${{ steps.build.outputs.Image_URL }}
     # --- #
 
 #     - name: Build, tag, and push image to Amazon ECR
