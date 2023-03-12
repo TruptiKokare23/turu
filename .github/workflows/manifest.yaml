@@ -8,11 +8,9 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: my-app
   template:
     metadata:
       labels:
-        app: my-app
     spec:
       volumes:
       - name: secret-volume
@@ -28,9 +26,9 @@ spec:
         - name: SECRET_FILE_PATH
           value: "/secret/secret.env"
         - name: SM_DB
-          value: "demo-database-secret"
+          value: "arc"
         - name: AWS_REGION
-          value: "ap-southeast-1"
+          value: "eu-west-2"
         volumeMounts:
           - mountPath: /secret
             name: secret-volume
@@ -41,7 +39,7 @@ spec:
         command: ["/bin/sh", "-c"]
         # Run your application command after sourcing env file or use the env file to your convenience
         args:
-          - "source /secret/secret.env && while true; do echo '\n\n$DB_PASSWORD = '$DB_PASSWORD; echo '\nContents of secret.env file:'; cat /secret/secret.env;  sleep 2; done"
+          - "source /secret/secret.env && while true; do echo '\nContents of secret.env file:'; cat /secret/secret.env;  sleep 2; done"
         env:
           - name: SECRET_FILE_PATH
             value: "/secret/secret.env"
