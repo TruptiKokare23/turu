@@ -34,13 +34,14 @@ jobs:
       
               # --- #
     - name: Build and push CONTAINER_NAME
-      uses: ianbelcher/eks-kubectl-action@master
-      with:
-        aws_region: "eu-west-2"
-        cluster_name: "ARC-Cluster"
-        eks_role_arn: "arn:aws:iam::080846062325:role/ARC-EKS-Role"
-        Image_URL: "080846062325.dkr.ecr.eu-west-2.amazonaws.com/arc:latest"
-        args: set image --record deployment/pod-name pod-name=${{ steps.build.outputs.Image_URL }}
+#       uses: ianbelcher/eks-kubectl-action@master
+#       with:
+#         aws_region: "eu-west-2"
+#         cluster_name: "ARC-Cluster"
+#         eks_role_arn: "arn:aws:iam::080846062325:role/ARC-EKS-Role"
+#         Image_URL: "080846062325.dkr.ecr.eu-west-2.amazonaws.com/arc:latest"
+      run: |
+        kubectl apply -f manifest.yaml
     # --- #
 
 #     - name: Build, tag, and push image to Amazon ECR
