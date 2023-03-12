@@ -1,48 +1,87 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: secret-manager
+#   labels:
+#     app: my-app
+# spec:
+#   replicas: 2
+#   selector:
+#     matchLabels:
+#   template:
+#     metadata:
+#       labels:
+#     spec:
+#       volumes:
+#       - name: secret-volume
+#         emptyDir: {}
+#       initContainers:
+#       - name: init-secret
+#         image: 080846062325.dkr.ecr.eu-west-2.amazonaws.com/arc
+#         imagePullPolicy: Always
+#         command: ["python"]
+#         args:
+#           - "secret.py"
+#         env:
+#         - name: SECRET_FILE_PATH
+#           value: "/secret/secret.env"
+#         - name: SM_DB
+#           value: "arc-secret"
+#         - name: AWS_REGION
+#           value: "eu-west-2"
+#         volumeMounts:
+#           - mountPath: /secret
+#             name: secret-volume
+#       containers:
+#       - name: main-app
+#         image: busybox
+#         imagePullPolicy: Always
+#         command: ["/bin/sh", "-c"]
+#         # Run your application command after sourcing env file or use the env file to your convenience
+#         args:
+#           - "source /secret/secret.env && while true; do echo '\nContents of secret.env file:'; cat /secret/secret.env;  sleep 2; done"
+#         env:
+#           - name: SECRET_FILE_PATH
+#             value: "/secret/secret.env"
+#         volumeMounts:
+#           - mountPath: /secret
+#             name: secret-volume
+
+
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: secret-manager
+  name: eks-sample-linux-deployment
+  namespace: eks-sample-app
   labels:
-    app: my-app
+    app: eks-sample-linux-app
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
+      app: eks-sample-linux-app
   template:
     metadata:
       labels:
+        app: eks-sample-linux-app
     spec:
-      volumes:
-      - name: secret-volume
-        emptyDir: {}
-      initContainers:
-      - name: init-secret
-        image: 080846062325.dkr.ecr.eu-west-2.amazonaws.com/arc
-        imagePullPolicy: Always
-        command: ["python"]
-        args:
-          - "secret.py"
-        env:
-        - name: SECRET_FILE_PATH
-          value: "/secret/secret.env"
-        - name: SM_DB
-          value: "arc-secret"
-        - name: AWS_REGION
-          value: "eu-west-2"
-        volumeMounts:
-          - mountPath: /secret
-            name: secret-volume
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - arm64
       containers:
-      - name: main-app
-        image: busybox
-        imagePullPolicy: Always
-        command: ["/bin/sh", "-c"]
-        # Run your application command after sourcing env file or use the env file to your convenience
-        args:
-          - "source /secret/secret.env && while true; do echo '\nContents of secret.env file:'; cat /secret/secret.env;  sleep 2; done"
-        env:
-          - name: SECRET_FILE_PATH
-            value: "/secret/secret.env"
-        volumeMounts:
-          - mountPath: /secret
-            name: secret-volume
+      - name: arc
+        image: 080846062325.dkr.ecr.eu-west-2.amazonaws.com/arc
+        ports:
+        - name: http
+          containerPort: 80
+        imagePullPolicy: IfNotPresent
+      nodeSelector:
+        kubernetes.io/os: linux
