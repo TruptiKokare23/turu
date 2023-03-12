@@ -32,11 +32,6 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
       
-          
-    - name: Setup Kube Context
-
-      run: |
-        echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > "${KUBECONFIG}"
 
     - name: Build, tag, and push image to Amazon ECR
       env:
