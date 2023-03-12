@@ -48,16 +48,25 @@ jobs:
         
         
         
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+#     - name: Login to Amazon ECR
+#       id: login-ecr
+#       uses: aws-actions/amazon-ecr-login@v1
 
+#     - name: deploy to cluster
+#       uses: kodermax/kubectl-aws-eks@master
+#       env:
+#         KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#         ECR_REPOSITORY: arc
+#         IMAGE_TAG: ${{ github.sha }}
+#       with:
+#         args: set image 080846062325.dkr.ecr.eu-west-2.amazonaws.com/arc
+
+    - uses: actions/checkout@master
     - name: deploy to cluster
-      uses: kodermax/kubectl-aws-eks@master
+      uses: wahyd4/kubectl-helm-action@master
       env:
         KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: arc
-        IMAGE_TAG: ${{ github.sha }}
       with:
-        args: set image 080846062325.dkr.ecr.eu-west-2.amazonaws.com/arc
+        args: kubectl apply -f manifest.yaml
+
