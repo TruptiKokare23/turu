@@ -28,11 +28,11 @@ jobs:
         AWS_SHARED_CREDENTIALS_FILE: ${{ runner.temp }}/.aws/credentials
       run: |
         # Setup AWS IAM Authenticator for Kubernetes
-        cd $( mktemp -d )
-        curl -o aws-iam-authenticator --location https://amazon-eks.s3-us-west-2.amazonaws.com/1.13.7/2019-06-11/bin/linux/amd64/aws-iam-authenticator
-        chmod +x ./aws-iam-authenticator
-        mv ./aws-iam-authenticator "${HOME}/.local/bin"
-        aws-iam-authenticator help
+        #cd $( mktemp -d )
+        #curl -o aws-iam-authenticator --location https://amazon-eks.s3-us-west-2.amazonaws.com/1.13.7/2019-06-11/bin/linux/amd64/aws-iam-authenticator
+        #chmod +x ./aws-iam-authenticator
+        #mv ./aws-iam-authenticator "${HOME}/.local/bin"
+        #aws-iam-authenticator help
         # Setup kustomize
         cd $( mktemp -d )
         curl -o kustomize --location https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
