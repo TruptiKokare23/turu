@@ -34,8 +34,6 @@ jobs:
       
           
     - name: Setup Kube Context
-      env:
-        AWS_CONFIG_FILE: ${{ runner.temp }}/.aws/config
 
       run: |
         echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > "${KUBECONFIG}"
