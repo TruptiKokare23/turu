@@ -32,7 +32,7 @@ jobs:
         chmod u+x ./kustomize
         mv ./kustomize "${HOME}/.local/bin"
         # Setup Kube Config
-        mkdir -p "${RUNNER_TEMP}/.kube"
+        mkdir -p "/.kube"
         echo "::set-env name=KUBECONFIG,::${KUBECONFIG}"
         echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > "${KUBECONFIG}"
         
