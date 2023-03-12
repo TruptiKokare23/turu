@@ -19,7 +19,7 @@ spec:
         emptyDir: {}
       initContainers:
       - name: init-secret
-        image: srijanlabs/init-secret:latest
+        image: 080846062325.dkr.ecr.eu-west-2.amazonaws.com/arc
         imagePullPolicy: Always
         command: ["python"]
         args:
