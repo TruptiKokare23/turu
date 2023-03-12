@@ -12,7 +12,9 @@ jobs:
     name: Build Image
     runs-on: ubuntu-latest
 
-   
+    outputs:
+      DOCKER_IMAGE_DIGEST: ${{ steps.docker-image-digest.outputs.DOCKER_IMAGE_DIGEST }}
+      
     steps:
 
     - name: Check out code
