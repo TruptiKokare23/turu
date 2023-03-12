@@ -23,7 +23,9 @@ jobs:
     
     - name: Setup Kube Context
       env:
-        KUBECONFIG: ${{ runner.temp }}/.kube/config
+        AWS_HOME: ${{ runner.temp }}/.aws
+        AWS_CONFIG_FILE: ${{ runner.temp }}/.aws/config
+        AWS_SHARED_CREDENTIALS_FILE: ${{ runner.temp }}/.aws/credentials
       run: |
         # Setup AWS IAM Authenticator for Kubernetes
         cd $( mktemp -d )
@@ -58,6 +60,8 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: "arc"
       run: |
+        -t $CONTAINER_IMAGE \
+        -t $GITHUB_REPOSITORY:$GITHUB_SHA \
         docker buildx build -t ${{env.ECR_REGISTRY}}/${{env.ECR_REPOSITORY}} -f ./Dockerfile .
         docker push ${{ steps.login-ecr.outputs.registry }}/${{env.ECR_REPOSITORY}}
         # Apply configuration to cluster
