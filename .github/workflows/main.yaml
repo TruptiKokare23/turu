@@ -60,5 +60,4 @@ jobs:
         ECR_REPOSITORY: arc
         IMAGE_TAG: ${{ github.sha }}
       with:
-        args: set image deployment/${{env.ECR_REPOSITORY}} ${{env.ECR_REPOSITORY}}=${{env.ECR_REGISTRY}}/${{env.ECR_REPOSITORY}}:$IMAGE_TAG
-        
+        args: set image 080846062325.dkr.ecr.eu-west-2.amazonaws.com/arc
