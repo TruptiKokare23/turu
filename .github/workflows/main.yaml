@@ -26,6 +26,7 @@ jobs:
         AWS_HOME: ${{ runner.temp }}/.aws
         AWS_CONFIG_FILE: ${{ runner.temp }}/.aws/config
         AWS_SHARED_CREDENTIALS_FILE: ${{ runner.temp }}/.aws/credentials
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
       run: |
         # Setup AWS IAM Authenticator for Kubernetes
         #cd $( mktemp -d )
